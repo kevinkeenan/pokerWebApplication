@@ -1,0 +1,43 @@
+components for poker app
+DECK
+array of cards
+shuffled array of cards
+img of back of card always showing
+
+
+TABLE
+2 randomized cards from DECK
+
+
+CARD
+suit
+number
+and scalable vector graphical 
+
+PLAYER
+chip stack
+has 2 cards
+
+GAME 
+has winner (player)
+betting sequence
+
+HAND 
+function to determine hand strength
+https://dev.to/miketalbot/real-world-javascript-map-reduce-solving-the-poker-hand-problem-3eie
+
+suit and order may be constant
+stringify the hand stenght and suit
+D - diamond
+C - club
+H - heart
+S - spade
+
+Jack k
+Queen
+King
+Ace
+
+how to make the best 5 card hand out of 7 will be tricky
+if board not paired dont check for boats or quads
+if less than 3 of any suit dont check for flush 
