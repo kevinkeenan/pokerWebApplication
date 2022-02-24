@@ -1,4 +1,3 @@
-<p>deck works!</p>
 <div appStartGame>  
 Start game
 </div>
@@ -10,14 +9,14 @@ Buy in p1
 </div> -->
 
 <!-- <audio id="audio" src="../kevinsWebsite/sound-onclick/click.mp3" autoplay="false" ></audio> -->
-<audio id="audio" src="/Users/kevinkeenan/Desktop/website/kevinsWebsite/sound-onclick/click.mp3" autoplay="false" ></audio>
-<a onclick="playSound();"> Play</a>
-<script>
+<!-- <audio id="audio" src="../assets/sound-onclick/click.mp3" autoplay="false" ></audio> -->
+<button class = "btn btn-primary" (click)="playSound()"> Play</button>
+<!-- <script>
 function playSound() {
       var sound = document.getElementById("audio");
       sound.play();
   }
-</script>
+</script> -->
 
 <div id ='potDiv'>
     POT: {{pot}}
@@ -26,19 +25,35 @@ function playSound() {
 <div id ='player1Chips'>
     {{player1Chips}}
 </div>
+<div>
+    <img class = "cardImage" src={{player1Card}} />
+    <img class = "cardImage" src={{player1Card2}} />
+</div>
 <p>player 2 $</p>
 <div id ='player2Chips'>
     {{player2Chips}}
 </div>
-<button id='checkButton' onclick = "">check</button> 
+<div>
+    <img class = "cardImage" src={{player2Card}} />
+    <img class = "cardImage" src={{player2Card2}} />
+</div>
+<button id='checkButton' (click)="playSound()" >check</button> 
 <div>
 <!-- <input id='raiseSlider' type = "range" min = "0" max = "{player1Chips}">raise -->
 <input id='raiseSlider' type="range" value="1" min="1" max="{player1Chips}" oninput="this.nextElementSibling.value = this.value">RAISE
-<output id='raiseSlider' appRaiseAmount>1</output>
+<output class="btn btn-primary" id='raiseSlider' appRaiseAmount (click)="playSound()">1</output>
 <br>
 </div>
-<button id='raiseOneThird' appRaiseAmount>1/3</button> 
-<button id='raiseOneHalf' appRaiseAmount>1/2</button> 
-<button id='raisePot' appRaiseAmount>Pot</button> 
+<button id='raiseOneThird' appRaiseAmount (click)="playSound()">1/3</button> 
+<button id='raiseOneHalf' appRaiseAmount (click)="playSound()">1/2</button> 
+<button id='raisePot' appRaiseAmount (click)="playSound()"> Pot</button> 
+
+<div>
+    <img class = "cardImage" src={{boardCards[0]}} />
+    <img class = "cardImage" src={{boardCards[1]}} />
+    <img class = "cardImage" src={{boardCards[2]}} />
+    <img class = "cardImage" src={{boardCards[3]}} />
+    <img class = "cardImage" src={{boardCards[4]}} />
+</div>
 
 <!-- <button onclick="shuffleDeck()"></button> -->

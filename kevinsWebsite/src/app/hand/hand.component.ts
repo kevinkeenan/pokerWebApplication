@@ -23,6 +23,10 @@ export class HandComponent implements OnInit {
   holeCards: string [] = [];//2cards
   sevenCards:string [] =[];//2cards+sharedboard
 
+  firstCardImageString: string = "";
+  secondCardImageString: string = "";
+  
+
   pokerHandIndependent:string [] =[];//hand which can be less than 5 cards
   cardsLeft:string [] =[];//cards to choose kicker from
   sortedKickerOnly:number [] =[];//sortedValuesOfKickers...really these are numbers
@@ -54,4 +58,6 @@ export class HandComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
+  
 }

@@ -33,6 +33,17 @@ export class DeckComponent implements OnInit {
   player3Chips: number = 0;
   player4Chips: number = 0;
   player5Chips: number = 0;
+  player1Card: string = "";
+  player2Card: string = "";
+  player3Card: string = "";
+  player4Card: string = "";
+  player5Card: string = "";
+  player1Card2: string = "";
+  player2Card2: string = "";
+  player3Card2: string = "";
+  player4Card2: string = "";
+  player5Card2: string = "";
+  boardCards: string [] = [];  
   playerTurn: number = 1;
   totalNumberOfPlayers: number = 2;
   bettingRound: number = 0;
@@ -96,26 +107,28 @@ export class DeckComponent implements OnInit {
     console.log('dealing cards to ' + numberOfPlayers + ' players');
     var playersfirstCard:string[] = [];
     var playersSecondCard: string[] = [];
-    var j = 0;
+    var j:number = 1;
     //var i = 0;
 
-    for(j; j < 2; j++)//every player gets one card...then every player gets a second card
+    for(j; j < 3; j++)//every player gets one card...then every player gets a second card
     {
       //console.log('j' + j)
-      for(var i = 0;i < 2; i++)//here 2 is the number of players
+      for(var i: number = 0;i < 2; i++)//here 2 is the number of players
       {
         var card= this.drawCard(shuffledDeck);
         //this.printDeck(shuffledDeck);
-        if(j==0)
+        if(j==1)
         {
           //on only the first go around create a hand and push to array
+          console.log('player'+ j +'hand');
+          //var hand1 = document.getElementById('player'+ (j) +'hand')! as unknown as HandComponent;//new HandComponent();
           var hand1 = new HandComponent();
           this.handArray.push(hand1);//push to global array so it can be referenced by counter instead of hand + inc
           console.log('dealing first card');
           playersfirstCard.push(card);
           this.handArray[i].holeCards.push(card);
         }
-        else if(j==1)
+        else if(j==2)
         {
           console.log('dealing second card');
           playersSecondCard.push(card);
@@ -127,10 +140,8 @@ export class DeckComponent implements OnInit {
     //this.printDeck(playersSecondCard);
     this.printDeck(this.handArray[0].holeCards);
 
-    //var playersHands = playersfirstCard.map((e, i) => [e, playersSecondCard[i]]);
-
-    var playersHands: any[] = [];
-    //return playersHands;
+    this.loadCardImages(this.handArray[0].holeCards, 1);
+    this.loadCardImages(this.handArray[1].holeCards, 2);
     return shuffledDeck;
   }
 
@@ -149,6 +160,7 @@ export class DeckComponent implements OnInit {
     this.printDeck(flop);
     //var playersHands = playersfirstCard.map((e, i) => [e, playersSecondCard[i]]);
     console.log('length of deck' + shuffledDeck.length)
+    this.loadCardImages(this.board, 0);
 
     var playersHands: any[] = [];
     return shuffledDeck;
@@ -164,6 +176,7 @@ export class DeckComponent implements OnInit {
     this.printDeck(turnOrRiver);
     console.log('length of deck' + shuffledDeck.length)
     var playersHands: any[] = [];
+    this.loadCardImages(turnOrRiver, 0);
     return playersHands;
   }
 
@@ -175,6 +188,9 @@ export class DeckComponent implements OnInit {
 
   raiseAmount(amount: number, turn: number)
   {
+    console.log(this.player1Card);
+    console.log(this.player1Card2);
+    
     //check if player has enough chips
     //do i need to pass in player turn or can i just reference 
     console.log('amount before' + amount);
@@ -282,9 +298,9 @@ export class DeckComponent implements OnInit {
     var highestRank = 0;
     for(var j = 0; j < 1; j++)//for now only compare 2 hands
     {
-      console.log("comparing hand A");
+      console.log("comparing hand A: "  + remainingHands[j].rank);
       this.printDeck(remainingHands[j].bestFiveCardCombination);
-      console.log("against hand B");
+      console.log("against hand B: " + remainingHands[j+1].rank);
       this.printDeck(remainingHands[j+1].bestFiveCardCombination);
       highestRank = this.compareTwoHands(remainingHands[j], remainingHands[j+1])
       if(highestRank ==1)
@@ -333,6 +349,7 @@ export class DeckComponent implements OnInit {
       console.log(handA.rank);
       console.log(handB.rank);
       //rank the pairs, flushes, themselves
+      //TODO
       //i will need to make sure that pokerHandIndpendent is sorted on values 
       //so a flush and straight will compare highest kickers
       //pairs do not matter as much
@@ -473,43 +490,43 @@ export class DeckComponent implements OnInit {
     }
     if(!hand.hasRank)
     {
-      console.log("not straight flush...in evaluate flush");
+      console.log("not boat..in evaluate flush");
 
       hand.bestFiveCardCombination = this.isFlush(hand);
     }
     if(!hand.hasRank)
     {
-      console.log("not straight flush...in evaluate straight");
+      console.log("not flush...in evaluate straight");
 
       hand.bestFiveCardCombination = this.isStraight(hand);
     }
     if(!hand.hasRank)
     {
-      console.log("not straight flush...in evaluate trips");
+      console.log("not straight ...in evaluate trips");
 
       hand.bestFiveCardCombination = this.isThreeOfAKind(hand)
     }
     if(!hand.hasRank)
     {
-      console.log("not straight flush...in evaluate 2pair");
+      console.log("not trips...in evaluate 2pair");
 
       hand.bestFiveCardCombination = this.isTwoPair(hand)
     }
     if(!hand.hasRank)
     {
-      console.log("not straight flush...in evaluate pqir");
+      console.log("not 2pair..in evaluate pair");
 
       hand.bestFiveCardCombination = this.isPair(hand)
     }
-    if(!hand.hasRank)
+    if(!hand.hasRank)//does it go in here even if it is not a high card
     {
-      console.log("not straight flush...in evaluate high card");
+      console.log("not pair..in evaluate high card");
 
       hand.ranks.high_card = true
       hand.rankHeirarchy[rankHeirarchyIndex.high_card]=true;
       hand.rank = "High Card";
       hand.hasRank = true;
-      console.log("hand is " + hand.rank)
+      //console.log("hand is " + hand.rank)
 
       hand.bestFiveCardCombination = this.getHighestCards(5,hand);//wants 5 highest card from 7 valued array of string
       
@@ -548,7 +565,6 @@ export class DeckComponent implements OnInit {
 
       return winningHand.concat(highestKicker);//returns 4 quad cards
     }
-    console.log("not quads");
     console.log(hand.numbers)
     console.log(hand.rank)
     console.log(hand.ranks.quads);
@@ -569,7 +585,6 @@ export class DeckComponent implements OnInit {
 
       var pairNumberIndex = hand.numbers.indexOf(2);
       var tripsNumberIndex = hand.numbers.indexOf(3);
-      //translate that number to letter in case it is a king queen etc
       var targetTripsCard = this.values[tripsNumberIndex];
       var targetPairCard = this.values[pairNumberIndex];
       var winningHand:string[] = [];
@@ -589,13 +604,11 @@ export class DeckComponent implements OnInit {
       }
       hand.cardsLeft = cardsLeft;      
       hand.numbers[tripsNumberIndex] = 0;//choose high card from remaining choices
-      var highestKicker = this.getHighestCards(1,hand);
 
       hand.pokerHandIndependent = winningHand;
 
-      return winningHand.concat(highestKicker);//returns 4 quad cards
+      return winningHand;
     }
-    console.log("not a boat")
 
     return [];
   }
@@ -682,23 +695,23 @@ export class DeckComponent implements OnInit {
     var count = 0;
     var firstPairIndex = hand.numbers.lastIndexOf(2);
     console.log("this first pair is " + this.values[firstPairIndex] + " with an index of " + firstPairIndex );
+    var pairIndices: number[] = [];
     if(firstPairIndex == -1)
     {
       return [];
     }
     var secondPairIndex = -1;
-    var pairIndices: number[] = [];
-
+    pairIndices.push(firstPairIndex);
     //if there is only a pair of 2s firstPairIndex - 1 = 0
     //it will never enter for loop...skips to isPair
 
-    for(var i = firstPairIndex - 1; i > 0; i--)//not a two pair if there is a pair of aces...dont go down to 0 index
+    for(var i = (firstPairIndex - 1); i > 0; i--)//not a two pair if there is a pair of aces...dont go down to 0 index
     {
       if(hand.numbers[i] == 2)
       {
         //or i could get last index of  first 2 and start counting back from there instead of numbers
         secondPairIndex = i;
-        console.log("this second pair is " + this.values[firstPairIndex] + " with an index of " + firstPairIndex );
+        console.log("this second pair is " + this.values[i] + " with an index of " + secondPairIndex );
         pairIndices.push(i);
         count++;
         break;
@@ -710,7 +723,6 @@ export class DeckComponent implements OnInit {
       //by new logic quits after first highest 2 pair combos
       //add the indices to the hand.indpendent
      
-     // hand.pokerHandIndependent = 
 
       var targetPairCard = this.values[firstPairIndex];
       var targetSecondPairCard = this.values[secondPairIndex];
@@ -737,19 +749,14 @@ export class DeckComponent implements OnInit {
       //very important the order of this is highest pair towards the beginning of the array
       //other wise 6s and 7s would beat Kings and 2s 
 
-      return winningHand.concat(highestKicker);//returns 3 trips cards and 2 highest kickers
-
-
       hand.ranks.two_pairs = true;
       hand.rankHeirarchy[rankHeirarchyIndex.two_pairs]=true;
       hand.rank = "Two Pair";
       console.log("hand is " + hand.rank)
       hand.hasRank = true;
-
-
+      return winningHand.concat(highestKicker);
 
       //hand.pokerHandIndependent = winningHand;
-      return [];
     }
     return [];
   }
@@ -891,6 +898,119 @@ export class DeckComponent implements OnInit {
     {
       console.log(deckToPrint[i]);
     }
+  }
+
+  loadCardImages(holeCards: string[], player:number): void {
+    console.log("inside load card images");
+    console.log(holeCards[0]);
+    console.log(holeCards[1]);
+    for(var i = 0; i < holeCards.length; i++)
+    {
+      var pictureString = "";
+      if(holeCards[i].charAt(0) == '2')
+      {
+        pictureString += "2";
+      }
+      else if(holeCards[i].charAt(0) == '3')
+      {
+        pictureString += "3";
+      }
+      else if(holeCards[i].charAt(0) == '4')
+      {
+        pictureString += "4";
+      }
+      else if(holeCards[i].charAt(0) == '5')
+      {
+        pictureString += "5";
+      }
+      else if(holeCards[i].charAt(0) == '6')
+      {
+        pictureString += "6";
+      }
+      else if(holeCards[i].charAt(0) == '7')
+      {
+        pictureString += "7";
+      }
+      else if(holeCards[i].charAt(0) == '8')
+      {
+        pictureString += "8";
+      }
+      else if(holeCards[i].charAt(0) == '9')
+      {
+        pictureString += "9";
+      }
+      else if(holeCards[i].charAt(0) == 'T')
+      {
+        pictureString += "10";
+      }
+      else if(holeCards[i].charAt(0) == 'J')
+      {
+        pictureString += "jack";
+      }
+      else if(holeCards[i].charAt(0) == 'Q')
+      {
+        pictureString += "queen";
+      }
+      else if(holeCards[i].charAt(0) == 'K')
+      {
+        pictureString += "king";
+      }
+      else if(holeCards[i].charAt(0) == 'A')
+      {
+        pictureString += "ace";
+      }
+
+      if(holeCards[i].charAt(1) == 'D')
+      {
+        pictureString += "_of_diamonds.png";
+      }
+      else if(holeCards[i].charAt(1) == 'C')
+      {
+        pictureString += "_of_clubs.png";
+      }
+      else if(holeCards[i].charAt(1) == 'H')
+      {
+        pictureString += "_of_hearts.png";
+      }
+      else if(holeCards[i].charAt(1) == 'S')
+      {
+        pictureString += "_of_spades.png";
+      }
+
+      switch (player) {
+        case 0://it is the shared board...flop...turn...river
+            this.boardCards.push("../assets/cardImages/" + pictureString);
+          break; 
+        case 1:
+          if(i == 0)
+          {
+            this.player1Card = "../assets/cardImages/" + pictureString;
+          }
+          else
+          {
+            this.player1Card2 = "../assets/cardImages/" + pictureString;
+          } 
+          break; 
+        case 2:
+          if(i == 0)
+          {
+            this.player2Card = "../assets/cardImages/" + pictureString;
+          }
+          else
+          {
+            this.player2Card2 = "../assets/cardImages/" + pictureString;
+          } 
+          break;
+        }
+    }
+  }
+
+  playSound()
+  {
+    let audio = new Audio();
+    audio.src = "../assets/sound-onclick/click.mp3";
+    audio.load();
+    audio.play();
   }
 
 }
