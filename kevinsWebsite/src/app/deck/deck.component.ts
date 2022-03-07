@@ -135,6 +135,7 @@ export class DeckComponent implements OnInit {
           this.handArray[i].holeCards.push(card);
         }
       }
+      this.playCardDealSound();
     }
     //this.printDeck(playersfirstCard);
     //this.printDeck(playersSecondCard);
@@ -148,7 +149,6 @@ export class DeckComponent implements OnInit {
   dealFlop(shuffledDeck: string[]): any[]{
     console.log('dealing flop');
     var flop:string[] = [];
-    var playersSecondCard: string[] = [];
     var j = 0;
     //var i = 0;
     for(j; j < 3; j++)//every player gets one card...then every player gets a second card
@@ -159,10 +159,11 @@ export class DeckComponent implements OnInit {
     }
     this.printDeck(flop);
     //var playersHands = playersfirstCard.map((e, i) => [e, playersSecondCard[i]]);
-    console.log('length of deck' + shuffledDeck.length)
+    //console.log('length of deck' + shuffledDeck.length)
     this.loadCardImages(this.board, 0);
 
     var playersHands: any[] = [];
+    this.playCardDealSound();
     return shuffledDeck;
   }
   
@@ -174,10 +175,11 @@ export class DeckComponent implements OnInit {
     this.board.push(card);
     
     this.printDeck(turnOrRiver);
-    console.log('length of deck' + shuffledDeck.length)
     var playersHands: any[] = [];
     this.loadCardImages(turnOrRiver, 0);
-    return playersHands;
+    this.playCardDealSound();
+
+    return shuffledDeck;
   }
 
   resetDeck(unshuffledDeck: string []):string[] {
@@ -317,6 +319,7 @@ export class DeckComponent implements OnInit {
       {
         console.log("Its a tie "+remainingHands[j].bestFiveCardCombination.toString() + remainingHands[j+1].bestFiveCardCombination.toString());
       }
+      //play sound for pushing pot
     }
     //compareHands function pass in remaining Hands...loop thru them...check hand rank
 
@@ -358,6 +361,7 @@ export class DeckComponent implements OnInit {
 
       for(var j = 0; j < handA.pokerHandIndependent.length; j++)//if same hand rank they will have the same length within poker hand type ie pair = 2
       {
+        //is the numbered Inedx Value of 13 different cards higher in one hand...is one pair higher than another?
         if(this.values.lastIndexOf(handA.pokerHandIndependent[j].charAt(0)) > this.values.lastIndexOf(handB.pokerHandIndependent[j].charAt(0))) //here we have array of string of cards, but we dont give a fuck about the suit
         {
           return 1;
@@ -612,17 +616,79 @@ export class DeckComponent implements OnInit {
 
     return [];
   }
+
+  /*
+  if there is a flush it is impossinle to have more than 1 kind of flush
+  find the target suit after it has been confirmed as a flush
+  put in ordered array for easier comparison of hand.indpendent poker hand
+  */
   isFlush(hand:HandComponent):string[]
   {
     if(hand.suits.includes(5) || hand.suits.includes(6) || hand.suits.includes(7))
     {
+      var targetSuit = hand.suits.indexOf(5);
+      if(!targetSuit)
+      {
+        targetSuit = hand.suits.indexOf(6);
+      }
+      if(!targetSuit)
+      {
+        targetSuit = hand.suits.indexOf(7);
+      }
+
+      var targetSuitChar= '';
+      switch (targetSuit) {
+        case 0:
+          targetSuitChar = 'D';
+        break;
+        case 1:
+          targetSuitChar = 'C';
+        break;
+        case 2:
+          targetSuitChar = 'H';
+        break;
+        case 3:
+          targetSuitChar = 'S';
+        break;
+      
+        default:
+          break;
+      }
       hand.ranks.flush = true;
       hand.rank = "Flush";
       hand.rankHeirarchy[rankHeirarchyIndex.flush]=true;
       console.log("hand is " + hand.rank)
       hand.hasRank = true;
 
-      //hand.pokerHandIndependent = winningHand;
+      var winningHand: string[] = [];
+      for(var i = 0; i < hand.sevenCards.length;i++)
+      {
+        if(hand.sevenCards[i].charAt(1)==targetSuitChar)
+        {
+          winningHand.push(hand.sevenCards[i]);
+        }
+      }
+//       const words = ['Tango', 'Zulu', 'Bravo', 'Lima'];
+// words.sort((a, b) => {
+//   if (b > a) return 1;
+//   if (b < a) return -1;
+//   return 0;
+// }); 
+
+      winningHand.sort((a,b) => {
+        if(winningHand.lastIndexOf(a) > winningHand.lastIndexOf(b))
+        {
+          return 1;
+        }
+        else
+        {
+          return -1;
+        }
+      });
+      this.printDeck(winningHand);
+      hand.pokerHandIndependent = winningHand;
+      //ensure that pokerHandIndependent is ranked in order from least to greatest
+
 
       return [];
     }
@@ -644,6 +710,7 @@ export class DeckComponent implements OnInit {
           console.log("hand is " + hand.rank)
           hand.hasRank = true;
 
+          //TODO: why is this commented out?
           //hand.pokerHandIndependent = winningHand;
 
           return [];//will need to adjust for edge case of 6 card straight
@@ -663,7 +730,7 @@ export class DeckComponent implements OnInit {
       //return the highest card
       hand.ranks.trips = true;
       hand.rankHeirarchy[rankHeirarchyIndex.trips]=true;
-      hand.rank = "Three Of a Kind";
+      hand.rank = "Three of a Kind";
       console.log("hand is " + hand.rank)
       hand.hasRank = true;
 
@@ -1011,6 +1078,37 @@ export class DeckComponent implements OnInit {
     audio.src = "../assets/sound-onclick/click.mp3";
     audio.load();
     audio.play();
+  }
+  playCardDealSound()
+  {
+    let audio = new Audio();
+    audio.src = "../assets/sound-onclick/single-card-dealt-from-hand.mp3";
+    audio.load();
+    audio.play();
+  }
+
+  foldHand()
+  {
+    // let audio = new Audio();
+    // audio.src = "../assets/sound-onclick/foldSound.mp3";
+    // audio.load();
+    // audio.play();
+    //set whatever players turn it was in the betting round;s hand to notLive
+    //check if 1 hand is still live
+  }
+  playPlaceBetSound()
+  {
+    // let audio = new Audio();
+    // audio.src = "../assets/sound-onclick/poker-chips-place-bet.mp3";
+    // audio.load();
+    // audio.play();
+  }
+  playWinPotSound()
+  {
+    // let audio = new Audio();
+    // audio.src = "../assets/sound-onclick/poker-chips-pile-movement.mp3";
+    // audio.load();
+    // audio.play();
   }
 
 }

@@ -37,11 +37,12 @@ function playSound() {
     <img class = "cardImage" src={{player2Card}} />
     <img class = "cardImage" src={{player2Card2}} />
 </div>
-<button id='checkButton' (click)="playSound()" >check</button> 
+<button id='checkButton' (click)="playSound()" >Check</button> 
+<button id='foldButton' (click)="foldHand()" >Fold</button> 
 <div>
 <!-- <input id='raiseSlider' type = "range" min = "0" max = "{player1Chips}">raise -->
 <input id='raiseSlider' type="range" value="1" min="1" max="{player1Chips}" oninput="this.nextElementSibling.value = this.value">RAISE
-<output class="btn btn-primary" id='raiseSlider' appRaiseAmount (click)="playSound()">1</output>
+<output class="btn btn-primary" id='raiseSlider' appRaiseAmount (click)="playPlaceBetSound()">1</output>
 <br>
 </div>
 <button id='raiseOneThird' appRaiseAmount (click)="playSound()">1/3</button> 
